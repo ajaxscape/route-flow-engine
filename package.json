@@ -25,10 +25,6 @@
     "url": "https://github.com/ajaxscape/route-flow-engine/issues"
   },
   "homepage": "https://github.com/ajaxscape/route-flow-engine#readme",
-  "devDependencies": {
-    "jest": "^24.9.0",
-    "standard": "^14.3.1"
-  },
   "jest": {
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
@@ -36,6 +32,18 @@
     ]
   },
   "standard": {
-    "globals": ["describe", "it", "expect", "beforeEach"]
+    "globals": [
+      "describe",
+      "it",
+      "expect",
+      "beforeEach"
+    ]
+  },
+  "dependencies": {
+    "deepmerge": "^4.2.2"
+  },
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "standard": "^14.3.1"
   }
 }
