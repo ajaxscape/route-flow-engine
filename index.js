@@ -3,19 +3,28 @@ const merge = require('deepmerge')
 
 class RouteFlowEngine {
   constructor (options = {}) {
-    const { config } = options
+    const { config, resolveQuery } = options
 
-    if (config) {
+    if (typeof config === 'object') {
       this._config = merge({}, config)
+    } else {
+      throw new Error('config object required')
     }
 
-    this._parseFlow(config)
+    if (typeof resolveQuery === 'function') {
+      this._resolveQuery = resolveQuery
+    } else {
+      throw new Error('resolveQuery function required')
+    }
+
+    this._parseFlow(config, resolveQuery)
   }
 
   _parseFlow (config) {
     this._flow = merge({}, config)
     Object.entries(this._flow).forEach(([id, node]) => {
       const { next, title } = node
+      node.id = id
       node.next = this.resolveAttribute(id, 'next', next, (val) => this._flow[val])
       node.title = this.resolveAttribute(id, 'title', title)
     })
@@ -28,9 +37,9 @@ class RouteFlowEngine {
       }
     } else if (typeof val === 'object') {
       const { query, when } = val
-      if (typeof query === 'function' && typeof when === 'object') {
+      if (typeof query === 'string' && typeof when === 'object') {
         return async (...args) => {
-          const result = await query(...args)
+          const result = await this._resolveQuery(query, ...args)
           if (result === undefined) {
             throw new Error(`Expected the "${attr}" query result for "${id}" to be one of "${Object.keys(when).join('", "')}" instead of "${result}"`)
           }

@@ -12,7 +12,7 @@ describe('RouteFlowEngine Test', () => {
         path: 'first-page',
         title: 'The first page',
         next: {
-          query: function (choice) { return choice },
+          query: 'skipPage',
           when: {
             false: 'second-page',
             true: 'third-page'
@@ -23,7 +23,7 @@ describe('RouteFlowEngine Test', () => {
       'second-page': {
         path: 'second-page',
         title: {
-          query: function (choice) { return choice },
+          query: 'isAlternative',
           when: {
             false: 'The second page',
             true: 'The alternative second page'
@@ -38,7 +38,7 @@ describe('RouteFlowEngine Test', () => {
         next: 'first-page'
       }
     }
-    this.routeFlow = new RouteFlowEngine({ config: this.config })
+    this.routeFlow = new RouteFlowEngine({ config: this.config, resolveQuery: async (query, choice) => choice })
   })
 
   it('config should be intact', async () => {
