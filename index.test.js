@@ -60,6 +60,12 @@ describe('RouteFlowEngine Test', () => {
     const { flow } = this.routeFlow
     const node = flow['first-page']
     expect(await node.title()).toEqual('The first page')
+    expect(await node.next(false)).toEqual(flow['second-page'])
+  })
+
+  it('first page should flow to third page', async () => {
+    const { flow } = this.routeFlow
+    const node = flow['first-page']
     expect(await node.next(true)).toEqual(flow['third-page'])
   })
 
@@ -68,6 +74,12 @@ describe('RouteFlowEngine Test', () => {
     const node = flow['second-page']
     expect(await node.title(false)).toEqual('The second page')
     expect(await node.next()).toEqual(flow['third-page'])
+  })
+
+  it('second page should have alternative title', async () => {
+    const { flow } = this.routeFlow
+    const node = flow['second-page']
+    expect(await node.title(true)).toEqual('The alternative second page')
   })
 
   it('third page should flow to first page', async () => {
