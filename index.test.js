@@ -1,46 +1,43 @@
 const { RouteFlowEngine } = require('./index')
-const merge = require('deepmerge')
-
-const config = {
-  home: {
-    path: '/',
-    next: 'first-page'
-  },
-
-  'first-page': {
-    path: 'first-page',
-    title: 'The first page',
-    next: {
-      query: function (choice) { return choice },
-      when: {
-        false: 'second-page',
-        true: 'third-page'
-      }
-    }
-  },
-
-  'second-page': {
-    path: 'second-page',
-    title: {
-      query: function (choice) { return choice },
-      when: {
-        false: 'The second page',
-        true: 'The alternative second page'
-      }
-    },
-    next: 'third-page'
-  },
-
-  'third-page': {
-    path: 'third-page',
-    title: 'The third page',
-    next: 'first-page'
-  }
-}
 
 describe('RouteFlowEngine Test', () => {
   beforeEach(async () => {
-    this.config = merge({}, config)
+    this.config = {
+      home: {
+        path: '/',
+        next: 'first-page'
+      },
+
+      'first-page': {
+        path: 'first-page',
+        title: 'The first page',
+        next: {
+          query: function (choice) { return choice },
+          when: {
+            false: 'second-page',
+            true: 'third-page'
+          }
+        }
+      },
+
+      'second-page': {
+        path: 'second-page',
+        title: {
+          query: function (choice) { return choice },
+          when: {
+            false: 'The second page',
+            true: 'The alternative second page'
+          }
+        },
+        next: 'third-page'
+      },
+
+      'third-page': {
+        path: 'third-page',
+        title: 'The third page',
+        next: 'first-page'
+      }
+    }
     this.routeFlow = new RouteFlowEngine({ config: this.config })
   })
 
