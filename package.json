@@ -1,0 +1,41 @@
+{
+  "name": "route-flow-engine",
+  "version": "0.1.0",
+  "description": "Parses json containing the flow of a web application",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajaxscape/route-flow-engine.git"
+  },
+  "keywords": [
+    "node",
+    "route-flow",
+    "route-flow-engine",
+    "flow-engine",
+    "foute",
+    "flow",
+    "engine"
+  ],
+  "author": "Ben Surgison",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ajaxscape/route-flow-engine/issues"
+  },
+  "homepage": "https://github.com/ajaxscape/route-flow-engine#readme",
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "standard": "^14.3.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
+  },
+  "standard": {
+    "globals": ["describe", "it", "expect", "beforeEach"]
+  }
+}

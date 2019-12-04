@@ -1,0 +1,14 @@
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+
+# Vscode project files
+.vscode
+
+# Node modules
+node_modules
+
+# Temporary files
+temp
