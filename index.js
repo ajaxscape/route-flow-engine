@@ -16,50 +16,34 @@ class RouteFlowEngine {
     this._flow = merge({}, config)
     Object.entries(this._flow).forEach(([id, node]) => {
       const { next, title } = node
-      // Make sure the next attribute that when executed will return the next node
-      if (typeof next === 'string') {
-        node.next = async () => this._flow[next]
-      } else if (typeof next === 'object') {
-        const { query, when } = next
-        if (typeof query === 'function' && typeof when === 'object') {
-          node.next = async (...args) => {
-            const result = await query(...args)
-            if (result === undefined) {
-              throw new Error(`Expected the "next" query result for "${id}" to be one of "${Object.keys(when).join('", "')}" instead of "${result}"`)
-            }
-            if (Object.keys(when).includes(result.toString())) {
-              return this._flow[when[result]]
-            } else {
-              throw new Error(`Expected the "next" query result for "${id}" to be one of "${Object.keys(when).join('", "')}" instead of "${result}"`)
-            }
-          }
-        } else {
-          throw new Error(`Expected the "next" attribute for "${id}" to contain a "query" function and a "when" object`)
-        }
-      }
-
-      // Make sure the title attribute that when executed will return the next node
-      if (typeof title === 'string') {
-        node.title = async () => title
-      } else if (typeof title === 'object') {
-        const { query, when } = title
-        if (typeof query === 'function' && typeof when === 'object') {
-          node.title = async (...args) => {
-            const result = await query(...args)
-            if (result === undefined) {
-              throw new Error(`Expected the "title" query result for "${id}" to be one of "${Object.keys(when).join('", "')}" instead of "${result}"`)
-            }
-            if (Object.keys(when).includes(result.toString())) {
-              return when[result]
-            } else {
-              throw new Error(`Expected the "title" query result for "${id}" to be one of "${Object.keys(when).join('", "')}" instead of "${result}"`)
-            }
-          }
-        } else {
-          throw new Error(`Expected the "title" attribute for "${id}" to contain a "query" function and a "when" object`)
-        }
-      }
+      node.next = this.resolveAttribute(id, 'next', next, (val) => this._flow[val])
+      node.title = this.resolveAttribute(id, 'title', title)
     })
+  }
+
+  resolveAttribute (id, attr, val, fn = (val) => val) {
+    if (typeof val === 'string') {
+      return async () => {
+        return fn(val)
+      }
+    } else if (typeof val === 'object') {
+      const { query, when } = val
+      if (typeof query === 'function' && typeof when === 'object') {
+        return async (...args) => {
+          const result = await query(...args)
+          if (result === undefined) {
+            throw new Error(`Expected the "${attr}" query result for "${id}" to be one of "${Object.keys(when).join('", "')}" instead of "${result}"`)
+          }
+          if (Object.keys(when).includes(result.toString())) {
+            return fn(when[result])
+          } else {
+            throw new Error(`Expected the "${attr}" query result for "${id}" to be one of "${Object.keys(when).join('", "')}" instead of "${result}"`)
+          }
+        }
+      } else {
+        throw new Error(`Expected the "${attr}" attribute for "${id}" to contain a "query" function and a "when" object`)
+      }
+    }
   }
 
   get config () {
