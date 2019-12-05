@@ -3,7 +3,7 @@ const merge = require('deepmerge')
 
 class RouteFlowEngine {
   constructor (options = {}) {
-    const { config, createRoute, resolveQuery } = options
+    const { config, createRoutes, resolveQuery } = options
 
     if (typeof config === 'object') {
       this._config = merge({}, config)
@@ -11,10 +11,10 @@ class RouteFlowEngine {
       throw new Error('config object required')
     }
 
-    if (typeof createRoute === 'function') {
-      this._createRoute = createRoute
+    if (typeof createRoutes === 'function') {
+      this._createRoutes = createRoutes
     } else {
-      throw new Error('createRoute function required')
+      throw new Error('createRoutes function required')
     }
 
     if (typeof resolveQuery === 'function') {
@@ -32,7 +32,7 @@ class RouteFlowEngine {
       .map(async ([id, node]) => {
         const { next, title } = node
         node.id = id
-        const route = await this._createRoute(node)
+        const route = await this._createRoutes(node)
         node.next = this.resolveAttribute(route, id, 'next', next, (val) => this._flow[val])
         node.title = this.resolveAttribute(route, id, 'title', title)
         return route

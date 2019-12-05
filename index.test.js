@@ -1,12 +1,12 @@
 const { RouteFlowEngine } = require('./index')
 
-class Route {
+class Routes {
   constructor (node) {
     this._node = node
   }
 
   static create (node) {
-    return new Route(node)
+    return new Routes(node)
   }
 }
 
@@ -50,8 +50,8 @@ describe('RouteFlowEngine Test', () => {
     }
     this.routeFlow = new RouteFlowEngine({
       config: this.config,
-      createRoute: async (node) => {
-        return Route.create(node)
+      createRoutes: async (node) => {
+        return Routes.create(node)
       },
       resolveQuery: async (route, query, choice) => {
         return choice
