@@ -3,12 +3,18 @@ const merge = require('deepmerge')
 
 class RouteFlowEngine {
   constructor (options = {}) {
-    const { config, resolveQuery } = options
+    const { config, createRoute, resolveQuery } = options
 
     if (typeof config === 'object') {
       this._config = merge({}, config)
     } else {
       throw new Error('config object required')
+    }
+
+    if (typeof createRoute === 'function') {
+      this._createRoute = createRoute
+    } else {
+      throw new Error('createRoute function required')
     }
 
     if (typeof resolveQuery === 'function') {
@@ -22,15 +28,19 @@ class RouteFlowEngine {
 
   _parseFlow (config) {
     this._flow = merge({}, config)
-    Object.entries(this._flow).forEach(([id, node]) => {
-      const { next, title } = node
-      node.id = id
-      node.next = this.resolveAttribute(id, 'next', next, (val) => this._flow[val])
-      node.title = this.resolveAttribute(id, 'title', title)
-    })
+    Promise.all(Object.entries(this._flow)
+      .map(async ([id, node]) => {
+        const { next, title } = node
+        node.id = id
+        const route = await this._createRoute(node)
+        node.next = this.resolveAttribute(route, id, 'next', next, (val) => this._flow[val])
+        node.title = this.resolveAttribute(route, id, 'title', title)
+        return route
+      })
+    )
   }
 
-  resolveAttribute (id, attr, val, fn = (val) => val) {
+  resolveAttribute (route, id, attr, val, fn = (val) => val) {
     if (typeof val === 'string') {
       return async () => {
         return fn(val)
@@ -39,7 +49,7 @@ class RouteFlowEngine {
       const { query, when } = val
       if (typeof query === 'string' && typeof when === 'object') {
         return async (...args) => {
-          const result = await this._resolveQuery(query, ...args)
+          const result = await this._resolveQuery(route, query, ...args)
           if (result === undefined) {
             throw new Error(`Expected the "${attr}" query result for "${id}" to be one of "${Object.keys(when).join('", "')}" instead of "${result}"`)
           }

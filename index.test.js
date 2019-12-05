@@ -1,5 +1,15 @@
 const { RouteFlowEngine } = require('./index')
 
+class Route {
+  constructor (node) {
+    this._node = node
+  }
+
+  static create (node) {
+    return new Route(node)
+  }
+}
+
 describe('RouteFlowEngine Test', () => {
   beforeEach(async () => {
     this.config = {
@@ -38,7 +48,15 @@ describe('RouteFlowEngine Test', () => {
         next: 'first-page'
       }
     }
-    this.routeFlow = new RouteFlowEngine({ config: this.config, resolveQuery: async (query, choice) => choice })
+    this.routeFlow = new RouteFlowEngine({
+      config: this.config,
+      createRoute: async (node) => {
+        return Route.create(node)
+      },
+      resolveQuery: async (route, query, choice) => {
+        return choice
+      }
+    })
   })
 
   it('config should be intact', async () => {
