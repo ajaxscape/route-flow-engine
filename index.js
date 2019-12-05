@@ -48,7 +48,7 @@ class RouteFlowEngine {
       const { query, when } = val
       if (typeof query === 'string' && typeof when === 'object') {
         return async (...args) => {
-          const result = await this._resolveQuery(query, ...args)
+          const result = await this._resolveQuery(this.flow[id], query, ...args)
           if (result === undefined) {
             throw new Error(`Expected the "${attr}" query result for "${id}" to be one of "${Object.keys(when).join('", "')}" instead of "${result}"`)
           }
