@@ -32,15 +32,14 @@ class RouteFlowEngine {
       .map(async ([id, node]) => {
         const { next, title } = node
         node.id = id
-        const route = await this._createRoutes(node)
-        node.next = this.resolveAttribute(route, id, 'next', next, (val) => this._flow[val])
-        node.title = this.resolveAttribute(route, id, 'title', title)
-        return route
+        node.next = this.resolveAttribute(id, 'next', next, (val) => this._flow[val])
+        node.title = this.resolveAttribute(id, 'title', title)
+        return this._createRoutes(node)
       })
     )
   }
 
-  resolveAttribute (route, id, attr, val, fn = (val) => val) {
+  resolveAttribute (id, attr, val, fn = (val) => val) {
     if (typeof val === 'string') {
       return async () => {
         return fn(val)
@@ -49,7 +48,7 @@ class RouteFlowEngine {
       const { query, when } = val
       if (typeof query === 'string' && typeof when === 'object') {
         return async (...args) => {
-          const result = await this._resolveQuery(route, query, ...args)
+          const result = await this._resolveQuery(query, ...args)
           if (result === undefined) {
             throw new Error(`Expected the "${attr}" query result for "${id}" to be one of "${Object.keys(when).join('", "')}" instead of "${result}"`)
           }

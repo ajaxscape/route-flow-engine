@@ -53,7 +53,7 @@ describe('RouteFlowEngine Test', () => {
       createRoutes: async (node) => {
         return Routes.create(node)
       },
-      resolveQuery: async (route, query, choice) => {
+      resolveQuery: async (query, choice) => {
         return choice
       }
     })
