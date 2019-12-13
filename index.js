@@ -1,5 +1,6 @@
 
 const merge = require('deepmerge')
+let flow
 
 class RouteFlowEngine {
   constructor (options = {}) {
@@ -36,7 +37,10 @@ class RouteFlowEngine {
         node.title = this.resolveAttribute(id, 'title', title)
         return this._createRoutes(node)
       })
-    )
+    ).then(() => {
+      // Save reference to flow globally
+      flow = this._flow
+    })
   }
 
   resolveAttribute (id, attr, val, fn = (val) => val) {
@@ -70,6 +74,11 @@ class RouteFlowEngine {
 
   get flow () {
     return this._flow
+  }
+
+  static get flow () {
+    // get global reference to flow
+    return flow
   }
 }
 

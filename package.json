@@ -1,6 +1,6 @@
 {
   "name": "route-flow-engine",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Parses json containing the flow of a web application",
   "main": "index.js",
   "scripts": {

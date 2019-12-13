@@ -103,4 +103,8 @@ describe('RouteFlowEngine Test', () => {
     expect(await node.title()).toEqual('The third page')
     expect(await node.next()).toEqual(flow['first-page'])
   })
+
+  it('Make sure the static flow is the same as the instance flow', async () => {
+    expect(RouteFlowEngine.flow).toEqual(this.routeFlow.flow)
+  })
 })
