@@ -2,6 +2,12 @@
 const merge = require('deepmerge')
 let flow
 
+async function until (fn) {
+  while (!fn()) {
+    await new Promise(resolve => setTimeout(resolve, 0))
+  }
+}
+
 class RouteFlowEngine {
   constructor (options = {}) {
     const { config, createRoutes, resolveQuery } = options
@@ -28,7 +34,7 @@ class RouteFlowEngine {
   }
 
   _parseFlow (config) {
-    this._flow = merge({}, config)
+    flow = this._flow = merge({}, config)
     Promise.all(Object.entries(this._flow)
       .map(async ([id, node]) => {
         const { next, title } = node
@@ -37,10 +43,7 @@ class RouteFlowEngine {
         node.title = this.resolveAttribute(id, 'title', title)
         return this._createRoutes(node)
       })
-    ).then(() => {
-      // Save reference to flow globally
-      flow = this._flow
-    })
+    )
   }
 
   resolveAttribute (id, attr, val, fn = (val) => val) {
@@ -76,9 +79,10 @@ class RouteFlowEngine {
     return this._flow
   }
 
-  static get flow () {
+  static async flow (name) {
     // get global reference to flow
-    return flow
+    await until(() => flow)
+    return flow[name]
   }
 }
 

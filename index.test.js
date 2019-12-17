@@ -105,6 +105,9 @@ describe('RouteFlowEngine Test', () => {
   })
 
   it('Make sure the static flow is the same as the instance flow', async () => {
-    expect(RouteFlowEngine.flow).toEqual(this.routeFlow.flow)
+    return Promise.all(Object.keys(this.routeFlow.flow).map(async (key) => {
+      const node = await RouteFlowEngine.flow(key)
+      expect(node).toEqual(this.routeFlow.flow[key])
+    }))
   })
 })
