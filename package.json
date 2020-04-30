@@ -43,7 +43,7 @@
     "deepmerge": "^4.2.2"
   },
   "devDependencies": {
-    "jest": "^24.9.0",
+    "jest": "^25.5.2",
     "standard": "^14.3.1"
   }
 }
