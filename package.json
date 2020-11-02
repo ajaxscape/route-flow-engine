@@ -44,6 +44,6 @@
   },
   "devDependencies": {
     "jest": "^24.9.0",
-    "standard": "^14.3.1"
+    "standard": "^16.0.1"
   }
 }
